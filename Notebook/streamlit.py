@@ -79,7 +79,7 @@ if submitted:
         top_3_sorted = sorted(top_3, key=lambda x: x[1], reverse=True)
         
         # Display podium
-        st.title(f"### 🏆 Podium")
+        st.title(f"🏆 Your most suiting jobs in AI")
         
         for i, (job, score) in enumerate(top_3_sorted, 1):
             emoji = "🥇" if i==1 else "🥈" if i==2 else "🥉"
