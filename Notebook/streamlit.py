@@ -10,6 +10,7 @@ import pandas as pd
 import os
 
 # --- ID MANAGEMENT ---
+# Penser a changer le chemin selon ou vous lancer 
 id_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "id.txt")
 with open(id_path, "r") as f:
     last_id = int(f.read().strip())
@@ -53,7 +54,8 @@ if submitted:
             "sql_level": [sql_level]
         })
 
-        output_path = os.path.join("..", "Data", "User", f"{new_id}_profile.csv")
+        # Penser a changer le chemin selon ou vous lancer 
+        output_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "User", f"{new_id}_profile.csv")
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         user_data.to_csv(output_path, index=False)
 
