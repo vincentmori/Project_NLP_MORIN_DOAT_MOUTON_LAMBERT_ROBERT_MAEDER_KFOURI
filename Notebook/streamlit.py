@@ -75,12 +75,18 @@ if submitted:
         
         st.success("🎯 Analysis complete!")
         
+        # sort in descending order 
+        top_3_sorted = sorted(top_3, key=lambda x: x[1], reverse=True)
+        
         # Display podium
-        st.markdown("### 🏆 Your top matching jobs:")
-        for i, (job, score) in enumerate(top_3, 1):
-            st.markdown(f"**{i}. {job}** — Similarity: `{score:.3f}`")
+        st.title(f"### 🏆 Podium")
+        
+        for i, (job, score) in enumerate(top_3_sorted, 1):
+            emoji = "🥇" if i==1 else "🥈" if i==2 else "🥉"
+            st.markdown(f"{emoji} **{job}** — Similarity: `{score:.3f}`")
 
-        top3_df = pd.DataFrame(top_3, columns=["Job", "Similarity"])
+
+        top3_df = pd.DataFrame(top_3_sorted, columns=["Job", "Similarity"])
 
         # Penser a changer le chemin selon ou vous lancer 
         output_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Response", f"{new_id}_top.csv")
