@@ -5,3 +5,6 @@ Machine Learning Engineer,"classification; regression; neural networks; model ev
 Data Engineer,"etl processes; data pipelines; data warehouse design; big data processing; distributed systems"
 NLP Engineer,"tokenization; word embeddings; transformers; semantic analysis; information retrieval"
 Prompt Engineer,"prompt design; few shot prompting; zero shot prompting; context optimization; instruction tuning"
+LLM Engineer,"prompt engineering; fine-tuning; transformers; embeddings; semantic analysis"
+AI Agent Developer,"autonomous agents; multi-agent systems; planning; reinforcement learning; API orchestration"
+Big Data Engineer,"hadoop; spark; kafka; data lakes; distributed systems; ETL pipelines"

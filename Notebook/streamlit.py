@@ -9,6 +9,15 @@ import streamlit as st
 import pandas as pd
 import os
 
+import sys
+
+# === Add Notebook file path to Python path ===
+path_to_notebook = r"C:\Users\vince\OneDrive\Bureau\ING5\NLP\05 - Project\Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI\Notebook"
+sys.path.append(path_to_notebook)
+
+# Now you can import your analysis module
+import analyse
+
 # --- ID MANAGEMENT ---
 # Penser a changer le chemin selon ou vous lancer 
 id_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "id.txt")
@@ -40,7 +49,7 @@ with st.form("profile_form"):
 
     submitted = st.form_submit_button("Save my responses")
 
-# --- SAVE RESPONSES ---
+# --- Print the top3 corresponding jobs ---
 if submitted:
     if experiences.strip() == "" and interests.strip() == "":
         st.warning("Please fill at least your experiences or interests before submitting.")
@@ -54,14 +63,26 @@ if submitted:
             "sql_level": [sql_level]
         })
 
+        # Save the profil 
         # Penser a changer le chemin selon ou vous lancer 
-        output_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "User", f"{new_id}_profile.csv")
+        output_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "User_input", f"{new_id}_profile.csv")
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         user_data.to_csv(output_path, index=False)
+            
+        # --- Spinner while analysis runs ---
+        with st.spinner("🧠 Analysing your profile... Please wait a moment."):
+            top_3 = analyse.main(user_data)
+        
+        st.success("🎯 Analysis complete!")
+        
+        # Display podium
+        st.markdown("### 🏆 Your top matching jobs:")
+        for i, (job, score) in enumerate(top_3, 1):
+            st.markdown(f"**{i}. {job}** — Similarity: `{score:.3f}`")
 
-        st.info(f"💾 Your responses have been saved. Wait for the analysis. Your id: {new_id}")
-        st.markdown("### 📝 Summary of your responses")
-        st.dataframe(user_data)
+        top3_df = pd.DataFrame(top_3, columns=["Job", "Similarity"])
 
-st.markdown("---")
-st.caption("Streamlit Prototype — User profile saved locally 📁")
+        # Penser a changer le chemin selon ou vous lancer 
+        output_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Response", f"{new_id}_top.csv")
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        top3_df.to_csv(output_path, index=False)
