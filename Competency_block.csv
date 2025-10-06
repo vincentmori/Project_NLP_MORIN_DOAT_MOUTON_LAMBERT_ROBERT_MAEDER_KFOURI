@@ -1,0 +1,7 @@
+job,competency
+Data Analyst,"data cleaning; data visualization; business reporting; dashboards; Excel; SQL"
+Data Scientist,"predictive modeling; A/B testing; feature engineering; hypothesis testing; statistical modeling"
+Machine Learning Engineer,"classification; regression; neural networks; model evaluation; deployment pipelines"
+Data Engineer,"ETL processes; data pipelines; data warehouse design; big data processing; distributed systems"
+NLP Engineer,"tokenization; word embeddings; transformers; semantic analysis; information retrieval"
+Prompt Engineer,"prompt design; few-shot prompting; zero-shot prompting; context optimization; instruction tuning"
