@@ -1,0 +1,7 @@
+pas de poids car resultats moins bon
+
+nettoyage classique
+
+model choisi celui car plus performant et fait pr analyse semantique
+
+choisi de prendre le max de la moyenne car c ce qui nous parait plus logique on moyenne la ressemblance par job et on prend les jobs avec la meilleur moyenne

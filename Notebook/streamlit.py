@@ -32,35 +32,53 @@ with open(id_path, "w") as f:
 st.set_page_config(page_title="User Profile Form", layout="centered")
 st.title("🧠 Discover your job in Data & AI!")
 st.markdown("""
-This form collects information about your professional experience, interests, and technical skills in order to discover which job in Data & AI suits you the most.  
+This form collects information about your professional experience, interests, qualities and technical skills in order to discover which job in IT suits you the most.  
 Your responses will be saved into a CSV file for later analysis.
 """)
 
 # --- FORM ---
 with st.form("profile_form"):
     experiences = st.text_area("Describe your experiences and related skills:", height=150)
-    interests = st.text_area("Tell us about your interests in terms of skills:", height=150)
+    interests = st.text_area("Tell us about your interests in terms:", height=150)
+    qualities = st.text_area("What are your main qualities:", height=150)
     
     col1, col2 = st.columns(2)
     with col1:
         python_level = st.slider("Python (1-5)", 1, 5, 3)
     with col2:
         sql_level = st.slider("SQL (1-5)", 1, 5, 3)
+        
+    col1, col2 = st.columns(2)
+    with col1:
+        html_level = st.slider("HTML (1-5)", 1, 5, 3)
+    with col2:
+        css_level = st.slider("CSS (1-5)", 1, 5, 3)
+        
+    col1, col2 = st.columns(2)
+    with col1:
+        hadoop_level = st.slider("Hadoop (1-5)", 1, 5, 3)
+    with col2:
+        cloud_level = st.slider("Cloud infrastructure (1-5)", 1, 5, 3)    
 
     submitted = st.form_submit_button("Save my responses")
 
 # --- Print the top3 corresponding jobs ---
 if submitted:
-    if experiences.strip() == "" and interests.strip() == "":
-        st.warning("Please fill at least your experiences or interests before submitting.")
+    if experiences.strip() == "" or interests.strip() == "" or qualities.strip() == "":
+        st.warning("Please fill every subjecty. It is really important for a better response.")
     else:
         st.success("✅ Your responses have been saved successfully!")
 
         user_data = pd.DataFrame({
             "experiences": [experiences],
             "interests": [interests],
+            "qualities": [qualities],
             "python_level": [python_level],
-            "sql_level": [sql_level]
+            "sql_level": [sql_level],
+            "html_level": [html_level],
+            "css_level": [css_level],
+            "hadoop_level": [hadoop_level],
+            "cloud_level": [cloud_level]
         })
 
         # Save the profil 
@@ -79,11 +97,11 @@ if submitted:
         top_3_sorted = sorted(top_3, key=lambda x: x[1], reverse=True)
         
         # Display podium
-        st.title(f"🏆 Your most suiting jobs in AI")
+        st.title(f"🏆 Your most suiting jobs in IT")
         
         for i, (job, score) in enumerate(top_3_sorted, 1):
             emoji = "🥇" if i==1 else "🥈" if i==2 else "🥉"
-            st.markdown(f"{emoji} **{job}** — Similarity: `{score:.3f}`")
+            st.markdown(f"{emoji} **{job}**")
 
 
         top3_df = pd.DataFrame(top_3_sorted, columns=["Job", "Similarity"])

@@ -8,6 +8,7 @@ import nltk
 from nltk.corpus import stopwords
 import re
 import string
+import torch 
 
 # === Step 2: Define competency framework (blocks) ===
 def load_competency_block():
@@ -24,7 +25,25 @@ def load_competency_block():
     return block_dict
 
 # === Step 3: Cleaning the user input ===
+def niveau(input_niveau):
+    if input_niveau == 1:
+        return "mauvais"
+    elif input_niveau in [2, 3]:
+        return "moyen"
+    elif input_niveau == 4:
+        return "bon"
+    elif input_niveau == 5:
+        return "très bon"
+    
 def cleaning_user_input(user_input_df):
+    # Add a new column based on the skills level of the user input
+    skills_text = f"Skills level : Python niveau {niveau(user_input_df['python_level'].iloc[0])}, SQL niveau {niveau(user_input_df['sql_level'].iloc[0])}, "
+    skills_text = skills_text + f"Skills level : HTML niveau {niveau(user_input_df['html_level'].iloc[0])}, CSS niveau {niveau(user_input_df['css_level'].iloc[0])}, "
+    skills_text = skills_text + f"Skills level : Hadoop niveau {niveau(user_input_df['hadoop_level'].iloc[0])}, {niveau(user_input_df['cloud_level'].iloc[0])} connaissance infrastructutre cloud."
+
+    user_input_df["skills_text"] = skills_text
+    user_input_df = user_input_df.drop(columns=["python_level", "sql_level", "html_level", "css_level", "hadoop_level", "cloud_level"])
+
     column_cleaning = user_input_df.columns
 
     #List of stop words
@@ -54,7 +73,7 @@ def cleaning_user_input(user_input_df):
     
 # === Step 4: Load SBERT model for embeddings === 
 def load_model():
-    model = SentenceTransformer("all-MiniLM-L6-v2") 
+    model = SentenceTransformer("multi-qa-mpnet-base-dot-v1") 
     
     return model
  
@@ -71,7 +90,7 @@ def embedding_user_input(user_input_df):
 def semantic_analysis(user_input_df):
     block_dict = load_competency_block()
     user_embeddings, model = embedding_user_input(user_input_df)
-    block_scores = {} 
+    block_scores = {}
     
     for block, competencies in block_dict.items(): 
         # Encode competency block phrases 
@@ -80,13 +99,15 @@ def semantic_analysis(user_input_df):
         # Compare each user input to competencies using cosine similarity 
         similarities = util.cos_sim(user_embeddings, block_embeddings) 
         
-        # Take mean similarity per user input and job 
-        block_score = similarities.mean().item() 
-        block_scores[block] = block_score
+        # Take max similarity per user input and average across inputs 
+        max_similarities = [float(sim.max()) for sim in similarities]   
+        block_score = np.mean(max_similarities) 
+        
+        block_scores[block] = block_score 
 
     # Obtain top 3 job similarity
     top_3_blocks = sorted(block_scores.items(), key=lambda x: x[1], reverse=True)[:3]
-    
+
     return top_3_blocks
 
 # === main ===
