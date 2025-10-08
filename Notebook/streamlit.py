@@ -12,7 +12,7 @@ import os
 import sys
 
 # === Add Notebook file path to Python path ===
-path_to_notebook = r"C:\Users\vince\OneDrive\Bureau\ING5\NLP\05 - Project\Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI\Notebook"
+path_to_notebook = "/Users/antonindoat/Desktop/Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI/Notebook"
 sys.path.append(path_to_notebook)
 
 # Now you can import your analysis module
@@ -20,7 +20,7 @@ import analyse
 
 # --- ID MANAGEMENT ---
 # Penser a changer le chemin selon ou vous lancer 
-id_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "id.txt")
+id_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "id.txt")
 with open(id_path, "r") as f:
     last_id = int(f.read().strip())
 
@@ -83,7 +83,7 @@ if submitted:
 
         # Save the profil 
         # Penser a changer le chemin selon ou vous lancer 
-        output_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "User_input", f"{new_id}_profile.csv")
+        output_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "User_input", f"{new_id}_profile.csv")
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         user_data.to_csv(output_path, index=False)
             
@@ -107,6 +107,6 @@ if submitted:
         top3_df = pd.DataFrame(top_3_sorted, columns=["Job", "Similarity"])
 
         # Penser a changer le chemin selon ou vous lancer 
-        output_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Response", f"{new_id}_top.csv")
+        output_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Response", f"{new_id}_top.csv")
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         top3_df.to_csv(output_path, index=False)
