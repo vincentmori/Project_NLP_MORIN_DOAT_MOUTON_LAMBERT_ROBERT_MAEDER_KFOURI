@@ -1,7 +1,9 @@
-pas de poids car resultats moins bon
-
 nettoyage classique
 
 model choisi celui car plus performant et fait pr analyse semantique
 
 choisi de prendre le max de la moyenne car c ce qui nous parait plus logique on moyenne la ressemblance par job et on prend les jobs avec la meilleur moyenne
+
+grosse reflexion sur les poids pr bien etre pertinent pat sur interet plus important qualite faible experience moyen et gros focus sur les competences ce qui differencie les metiers
+
+gros probleme sur les competency block faut etre large mais pas trop sinon les metiers se ressemblent trop et on obtient le meme score et si trop precis l'utilisateur doit mettre un truc trop precis il doit rester quand meme general
