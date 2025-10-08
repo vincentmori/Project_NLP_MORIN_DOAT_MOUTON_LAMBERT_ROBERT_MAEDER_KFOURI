@@ -12,7 +12,8 @@ import torch
 
 # === Step 2: Define competency framework (blocks) ===
 def load_competency_block():
-    block_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Competency_block.csv")
+    # block_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Competency_block.csv")
+    block_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Competency_block.csv")
     block_df = pd.read_csv(block_path)
 
     # Transform in dictionnary
@@ -28,7 +29,7 @@ def cleaning_user_input(user_input_df):
     column_cleaning = user_input_df.columns
 
     #List of stop words
-    stop_words = set(stopwords.words('french'))
+    stop_words = set(stopwords.words('english'))
 
     for col in column_cleaning:
         # To lower case
