@@ -12,38 +12,19 @@ import torch
 
 # === Step 2: Define competency framework (blocks) ===
 def load_competency_block():
-
-    block_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Competency_block.csv")
+    block_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Competency_block.csv")
     block_df = pd.read_csv(block_path)
 
     # Transform in dictionnary
-    block_dict = block_df.set_index('job').to_dict('index')
+    block_dict = block_df.set_index('Job').to_dict('index')
 
     # Séparer les compétences en liste
-    block_dict = {job: val['competency'].split('; ') for job, val in block_dict.items()}
+    block_dict = {job: val['Competences'].split('; ') for job, val in block_dict.items()}
     
     return block_dict
 
 # === Step 3: Cleaning the user input ===
-def niveau(input_niveau):
-    if input_niveau == 1:
-        return "mauvais"
-    elif input_niveau in [2, 3]:
-        return "moyen"
-    elif input_niveau == 4:
-        return "bon"
-    elif input_niveau == 5:
-        return "très bon"
-    
 def cleaning_user_input(user_input_df):
-    # Add a new column based on the skills level of the user input
-    skills_text = f"Skills level : Python niveau {niveau(user_input_df['python_level'].iloc[0])}, SQL niveau {niveau(user_input_df['sql_level'].iloc[0])}, "
-    skills_text = skills_text + f"Skills level : HTML niveau {niveau(user_input_df['html_level'].iloc[0])}, CSS niveau {niveau(user_input_df['css_level'].iloc[0])}, "
-    skills_text = skills_text + f"Skills level : Hadoop niveau {niveau(user_input_df['hadoop_level'].iloc[0])}, {niveau(user_input_df['cloud_level'].iloc[0])} connaissance infrastructutre cloud."
-
-    user_input_df["skills_text"] = skills_text
-    user_input_df = user_input_df.drop(columns=["python_level", "sql_level", "html_level", "css_level", "hadoop_level", "cloud_level"])
-
     column_cleaning = user_input_df.columns
 
     #List of stop words
@@ -82,8 +63,40 @@ def embedding_user_input(user_input_df):
     user_input_clean = cleaning_user_input(user_input_df)
     model = load_model() 
     
-    user_embeddings = model.encode(user_input_clean, convert_to_tensor=True)
-    
+    # Helper : encode proprement un texte en 2D tensor normalisé
+    def encode_text(text):
+        emb = model.encode(text, convert_to_tensor=True)
+        emb = emb.unsqueeze(0) if emb.dim() == 1 else emb
+        return emb
+
+    # Encode parties textuelles principales
+    xp_embeddings = encode_text(user_input_clean[0]).mean(dim=0)          # expérience
+    interet_embeddings = encode_text(user_input_clean[1]).mean(dim=0)     # intérêts
+    qual_embeddings = encode_text(user_input_clean[2]).mean(dim=0)        # qualités
+
+    # Encode chaque skill individuel
+    skills = ["python", "sql", "html", "css", "hadoop", "cloud"]
+    skill_embeddings = {s: encode_text(s) for s in skills}
+
+    # Pondération des parties principales (texte)
+    xp_w, interet_w, qual_w = 0.2, 0.4, 0.05
+
+    # Pondération des skills techniques selon le niveau utilisateur
+    def skill_weight(level):
+        # Niveau d'importance selon la maîtrise
+        mapping = {1: 0, 2: 0, 3: 0, 4: 0.9, 5: 1.0}
+        return mapping.get(level, 0.1) 
+
+
+    user_embeddings = xp_w * xp_embeddings + interet_w * interet_embeddings + qual_w * qual_embeddings
+    user_embeddings = user_embeddings + skill_weight(user_input_df["python_level"].iloc[0]) * skill_embeddings["python"]
+    user_embeddings = user_embeddings + skill_weight(user_input_df["sql_level"].iloc[0]) * skill_embeddings["sql"]
+    user_embeddings = user_embeddings + skill_weight(user_input_df["html_level"].iloc[0]) * skill_embeddings["html"]
+    user_embeddings = user_embeddings + skill_weight(user_input_df["css_level"].iloc[0]) * skill_embeddings["css"]
+    user_embeddings = user_embeddings + skill_weight(user_input_df["hadoop_level"].iloc[0]) * skill_embeddings["hadoop"]
+    user_embeddings = user_embeddings + skill_weight(user_input_df["cloud_level"].iloc[0]) * skill_embeddings["cloud"]
+
+    user_embeddings = torch.nn.functional.normalize(user_embeddings, p=2, dim=0)
     return user_embeddings, model
 
 # === Step 6: Calculate semantic similarity for each block === 
@@ -98,12 +111,12 @@ def semantic_analysis(user_input_df):
         
         # Compare each user input to competencies using cosine similarity 
         similarities = util.cos_sim(user_embeddings, block_embeddings) 
-        
+
         # Take max similarity per user input and average across inputs 
         max_similarities = [float(sim.max()) for sim in similarities]   
-        block_score = np.mean(max_similarities) 
+        block_score = np.mean(max_similarities)
         
-        block_scores[block] = block_score 
+        block_scores[block] = block_score
 
     # Obtain top 3 job similarity
     top_3_blocks = sorted(block_scores.items(), key=lambda x: x[1], reverse=True)[:3]
