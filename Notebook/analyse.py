@@ -85,7 +85,7 @@ def embedding_user_input(user_input_df):
     # Pondération des skills techniques selon le niveau utilisateur
     def skill_weight(level):
         # Niveau d'importance selon la maîtrise
-        mapping = {1: 0, 2: 0, 3: 0, 4: 0.9, 5: 1.0}
+        mapping = {1: -1, 2: -0.3, 3: 0, 4: 0.7, 5: 1.0}
         return mapping.get(level, 0.1) 
 
 
@@ -97,7 +97,7 @@ def embedding_user_input(user_input_df):
     user_embeddings = user_embeddings + skill_weight(user_input_df["hadoop_level"].iloc[0]) * skill_embeddings["hadoop"]
     user_embeddings = user_embeddings + skill_weight(user_input_df["cloud_level"].iloc[0]) * skill_embeddings["cloud"]
 
-    user_embeddings = torch.nn.functional.normalize(user_embeddings, p=2, dim=0)
+    # user_embeddings = torch.nn.functional.normalize(user_embeddings, p=2, dim=0)
     return user_embeddings, model
 
 # === Step 6: Calculate semantic similarity for each block === 
@@ -113,11 +113,11 @@ def semantic_analysis(user_input_df):
         # Compare each user input to competencies using cosine similarity 
         similarities = util.cos_sim(user_embeddings, block_embeddings) 
 
-        # Take max similarity per user input and average across inputs 
-        max_similarities = [float(sim.max()) for sim in similarities]   
-        block_score = np.mean(max_similarities)
+        # Take mean similarity per user input and average across inputs 
+        mean_similarities = [float(sim.mean()) for sim in similarities]   
+        # block_score = np.mean(max_similarities)    # block_score = np.mean(max_similarities)
         
-        block_scores[block] = block_score
+        block_scores[block] = mean_similarities
 
     # Obtain top 3 job similarity
     top_3_blocks = sorted(block_scores.items(), key=lambda x: x[1], reverse=True)[:3]
