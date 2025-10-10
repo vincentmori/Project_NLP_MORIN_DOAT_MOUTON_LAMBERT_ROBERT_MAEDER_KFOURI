@@ -20,7 +20,7 @@ def load_competency_block():
     block_dict = block_df.set_index('Job').to_dict('index')
 
     # Séparer les compétences en liste
-    block_dict = {job: val['Competences'].split('; ') for job, val in block_dict.items()}
+    block_dict = {job: val['Competences'].split(', ') for job, val in block_dict.items()}
     
     return block_dict
 
