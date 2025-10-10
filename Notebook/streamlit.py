@@ -32,7 +32,7 @@ with open(id_path, "w") as f:
 
 # --- CONFIGURATION ---
 st.set_page_config(page_title="User Profile Form", layout="centered")
-st.title("🧠 Discover your job in Data & AI!")
+st.title("🧠 Discover your job in IT!")
 st.markdown("""
 This form collects information about your professional experience, interests, qualities and technical skills in order to discover which job in IT suits you the most.  
 Your responses will be saved into a CSV file for later analysis.
@@ -100,12 +100,25 @@ if submitted:
         # sort in descending order 
         top_3_sorted = sorted(top_3, key=lambda x: x[1], reverse=True)
         
-        # Display podium
-        st.title(f"🏆 Your most suiting jobs in IT")
-        
+        # --- Display podium with links ---
+        st.title("🏆 Your most suiting jobs in IT")
+
         for i, (job, score) in enumerate(top_3_sorted, 1):
-            emoji = "🥇" if i==1 else "🥈" if i==2 else "🥉"
-            st.markdown(f"{emoji} **{job}**")
+            emoji = "🥇" if i == 1 else "🥈" if i == 2 else "🥉"
+            st.markdown(f"### {emoji} **{job}** {score} **")
+
+            # Générer automatiquement une recherche Welcome to the Jungle
+            query = job.replace(" ", "%20")
+            url = f"https://www.welcometothejungle.com/fr/jobs?query={query}"
+
+            st.markdown(
+                f"""
+                <div style="background-color:#f9f9f9;border:1px solid #e0e0e0;border-radius:8px;padding:10px;margin-bottom:15px;">
+                    <p style="margin:5px 0;">🔗 <a href="{url}" target="_blank">Voir les offres "{job}" sur Welcome to the Jungle</a></p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
 
         top3_df = pd.DataFrame(top_3_sorted, columns=["Job", "Similarity"])
