@@ -59,7 +59,6 @@ def load_model():
     
     return model
  
-# === Step 5: Encode user inputs ===
 def embedding_user_input(user_input_df):
     user_input_clean = cleaning_user_input(user_input_df)
     model = load_model() 
@@ -75,30 +74,32 @@ def embedding_user_input(user_input_df):
     interet_embeddings = encode_text(user_input_clean[1]).mean(dim=0)     # intérêts
     qual_embeddings = encode_text(user_input_clean[2]).mean(dim=0)        # qualités
 
-    # Encode chaque skill individuel
-    skills = ["python", "sql", "html", "css", "hadoop", "cloud"]
-    skill_embeddings = {s: encode_text(s) for s in skills}
-
     # Pondération des parties principales (texte)
     xp_w, interet_w, qual_w = 0.2, 0.4, 0.05
-
-    # Pondération des skills techniques selon le niveau utilisateur
-    def skill_weight(level):
-        # Niveau d'importance selon la maîtrise
-        mapping = {1: -1, 2: -0.3, 3: 0, 4: 0.7, 5: 1.0}
-        return mapping.get(level, 0.1) 
-
-
     user_embeddings = xp_w * xp_embeddings + interet_w * interet_embeddings + qual_w * qual_embeddings
-    user_embeddings = user_embeddings + skill_weight(user_input_df["python_level"].iloc[0]) * skill_embeddings["python"]
-    user_embeddings = user_embeddings + skill_weight(user_input_df["sql_level"].iloc[0]) * skill_embeddings["sql"]
-    user_embeddings = user_embeddings + skill_weight(user_input_df["html_level"].iloc[0]) * skill_embeddings["html"]
-    user_embeddings = user_embeddings + skill_weight(user_input_df["css_level"].iloc[0]) * skill_embeddings["css"]
-    user_embeddings = user_embeddings + skill_weight(user_input_df["hadoop_level"].iloc[0]) * skill_embeddings["hadoop"]
-    user_embeddings = user_embeddings + skill_weight(user_input_df["cloud_level"].iloc[0]) * skill_embeddings["cloud"]
 
-    # user_embeddings = torch.nn.functional.normalize(user_embeddings, p=2, dim=0)
+    # === Option C : encoder les skills choisis par l'utilisateur ===
+    skills = ["python", "sql", "html", "css", "hadoop", "cloud"]
+    selected_skills = []
+
+    for skill in skills:
+        try:
+            level = int(user_input_df[f"{skill}_level"].iloc[0])  # conversion en int
+        except (ValueError, TypeError):
+            level = 0
+        if level > 0:
+            selected_skills.extend([skill] * level)  # répéter le mot selon le niveau
+
+    if selected_skills:
+        skills_text = " ".join(selected_skills)
+        skill_embeddings_user = encode_text(skills_text).mean(dim=0)
+        user_embeddings = user_embeddings + skill_embeddings_user
+
+    # Normalisation finale
+    user_embeddings = torch.nn.functional.normalize(user_embeddings, p=2, dim=0)
+
     return user_embeddings, model
+
 
 # === Step 6: Calculate semantic similarity for each block === 
 def semantic_analysis(user_input_df):
