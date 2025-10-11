@@ -13,24 +13,19 @@ import sys
 
 # === Add Notebook file path to Python path ===
 # Change with your path
-#path_to_notebook = r"C:\Users\vince\OneDrive\Bureau\ING5\NLP\05 - Project\Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI\Notebook"
-path_to_notebook = "/Users/antonindoat/Desktop/Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI/Notebook"
-#path_to_notebook = os.path.join("C:\\Users\\augus\\ing4\\NLP\\projet\\Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI","Notebook")sys.path.append(path_to_notebook)
+path_to_notebook = "Notebook"
 
 # Now you can import your analysis module
 import analyse
 
 # --- ID MANAGEMENT ---
 # Change with your path
-#id_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "id.txt") 
-id_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "id.txt")
-# id_path = os.path.join("C:\\Users\\augus\\ing4\\NLP\\projet\\Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI","Data","id.txt")
+id_path = os.path.join("Data", "id.txt") 
+
 with open(id_path, "r") as f:
     last_id = int(f.read().strip())
 
 new_id = last_id + 1
-with open(id_path, "w") as f:
-    f.write(str(new_id))
 
 # --- CONFIGURATION ---
 st.set_page_config(page_title="User Profile Form", layout="centered")
@@ -88,12 +83,13 @@ if submitted:
         # Save the profil 
         
         # Change with your path
-        # output_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "User_input", f"{new_id}_profile.csv")
-        output_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "User_input", f"{new_id}_profile.csv")
-        #output_path = os.path.join("C:\\Users\\augus\\ing4\\NLP\\projet\\Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI","Data", "User_input", f"{new_id}_profile.csv")
+        output_path = os.path.join("Data", "User_input", f"{new_id}_profile.csv")
         
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         user_data.to_csv(output_path, index=False)
+        
+        with open(id_path, "w") as f:
+            f.write(str(new_id))
             
         # --- Spinner while analysis runs ---
         with st.spinner("🧠 Analysing your profile... Please wait a moment."):
@@ -128,8 +124,6 @@ if submitted:
         top3_df = pd.DataFrame(top_3_sorted, columns=["Job", "Similarity"])
 
         # Change with your path 
-        # output_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Response", f"{new_id}_top.csv")
-        output_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Response", f"{new_id}_top.csv")
-        # output_path = os.path.join("C:\\Users\\augus\\ing4\\NLP\\projet\\Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI","Data", "User_input", f"{new_id}_top.csv")
+        output_path = os.path.join("Data", "Response", f"{new_id}_top.csv")
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         top3_df.to_csv(output_path, index=False)

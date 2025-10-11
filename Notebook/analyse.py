@@ -12,12 +12,8 @@ import torch
 
 # Step 2: Define competency framework (blocks) 
 def load_competency_block():
-    # block_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Competency_block.csv")
-    # block_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Competency_block.csv")
-    block_path = os.path.join(
-    "C:\\Users\\augus\\ing4\\NLP\\projet\\Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI",
-    "Data",
-    "Competency_block.csv")
+    block_path = os.path.join("Data", "Competency_block.csv")
+
     block_df = pd.read_csv(block_path)
 
     # Transform in dictionnary
