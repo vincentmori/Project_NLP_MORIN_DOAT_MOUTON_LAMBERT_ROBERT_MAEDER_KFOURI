@@ -4,22 +4,23 @@ import numpy as np
 import pandas as pd
 import os
 import nltk
-# nltk.download('stopwords') # Decommenter si besoin
+# nltk.download('stopwords')
 from nltk.corpus import stopwords
 import re
 import string
 import torch 
 
-# === Step 2: Define competency framework (blocks) ===
+# Step 2: Define competency framework (blocks) 
 def load_competency_block():
     block_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Competency_block.csv")
-    #block_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Competency_block.csv")
+    # block_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Competency_block.csv")
+    # block_path = os.path.join("C:\\Users\\augus\\ing4\\NLP\\projet\\Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI","Data","Competency_block.csv")
     block_df = pd.read_csv(block_path)
 
     # Transform in dictionnary
     block_dict = block_df.set_index('Job').to_dict('index')
 
-    # Séparer les compétences en liste
+    # Separate skills into a list
     block_dict = {job: val['Competences'].split(', ') for job, val in block_dict.items()}
     
     return block_dict
@@ -50,52 +51,52 @@ def cleaning_user_input(user_input_df):
 
     for col in column_cleaning:
         user_input.append(user_input_df[col].iloc[0])
-        
     return user_input
     
-# === Step 4: Load SBERT model for embeddings === 
+# Load SBERT model for embeddings
 def load_model():
     model = SentenceTransformer("multi-qa-mpnet-base-dot-v1") 
-    
     return model
  
 def embedding_user_input(user_input_df):
     user_input_clean = cleaning_user_input(user_input_df)
     model = load_model() 
     
-    # Helper : encode proprement un texte en 2D tensor normalisé
+    # Properly encodes text into a normalized 2D tensor
     def encode_text(text):
         emb = model.encode(text, convert_to_tensor=True)
+        #Convert_to_tensor=True Return a PyTorch tensor instead of a regular Numpy array
         emb = emb.unsqueeze(0) if emb.dim() == 1 else emb
+        #Ensure that the embedding always has two dimensions
         return emb
 
-    # Encode parties textuelles principales
-    xp_embeddings = encode_text(user_input_clean[0]).mean(dim=0)          # expérience
-    interet_embeddings = encode_text(user_input_clean[1]).mean(dim=0)     # intérêts
-    qual_embeddings = encode_text(user_input_clean[2]).mean(dim=0)        # qualités
+    # Encode main text sections
+    xp_embeddings = encode_text(user_input_clean[0]).mean(dim=0)          # Experiences 
+    interet_embeddings = encode_text(user_input_clean[1]).mean(dim=0)     # Interests 
+    qual_embeddings = encode_text(user_input_clean[2]).mean(dim=0)        # Qualities
 
-    # Pondération des parties principales (texte)
+    # Weighting of main parts (text)
     xp_w, interet_w, qual_w = 0.2, 0.4, 0.05
     user_embeddings = xp_w * xp_embeddings + interet_w * interet_embeddings + qual_w * qual_embeddings
 
-    # === Option C : encoder les skills choisis par l'utilisateur ===
+    # Encode the skills chosen by the user
     skills = ["python", "sql", "html", "css", "hadoop", "cloud"]
     selected_skills = []
 
     for skill in skills:
         try:
-            level = int(user_input_df[f"{skill}_level"].iloc[0])  # conversion en int
+            level = int(user_input_df[f"{skill}_level"].iloc[0])  # Convert in Int
         except (ValueError, TypeError):
             level = 0
         if level > 0:
-            selected_skills.extend([skill] * level)  # répéter le mot selon le niveau
+            selected_skills.extend([skill] * level)  # Repeat the word according to the level
 
     if selected_skills:
         skills_text = " ".join(selected_skills)
         skill_embeddings_user = encode_text(skills_text).mean(dim=0)
         user_embeddings = user_embeddings + skill_embeddings_user
 
-    # Normalisation finale
+    # Final  embedding
     user_embeddings = torch.nn.functional.normalize(user_embeddings, p=2, dim=0)
 
     return user_embeddings, model

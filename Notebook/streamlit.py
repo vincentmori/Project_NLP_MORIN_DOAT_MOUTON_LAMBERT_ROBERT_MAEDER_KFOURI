@@ -12,17 +12,19 @@ import os
 import sys
 
 # === Add Notebook file path to Python path ===
-path_to_notebook = r"C:\Users\vince\OneDrive\Bureau\ING5\NLP\05 - Project\Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI\Notebook"
-#path_to_notebook = "/Users/antonindoat/Desktop/Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI/Notebook"
-sys.path.append(path_to_notebook)
+# Change with your path
+#path_to_notebook = r"C:\Users\vince\OneDrive\Bureau\ING5\NLP\05 - Project\Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI\Notebook"
+path_to_notebook = "/Users/antonindoat/Desktop/Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI/Notebook"
+#path_to_notebook = os.path.join("C:\\Users\\augus\\ing4\\NLP\\projet\\Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI","Notebook")sys.path.append(path_to_notebook)
 
 # Now you can import your analysis module
 import analyse
 
 # --- ID MANAGEMENT ---
-# Penser a changer le chemin selon ou vous lancer
-id_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "id.txt") 
-# id_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "id.txt")
+# Change with your path
+#id_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "id.txt") 
+id_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "id.txt")
+# id_path = os.path.join("C:\\Users\\augus\\ing4\\NLP\\projet\\Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI","Data","id.txt")
 with open(id_path, "r") as f:
     last_id = int(f.read().strip())
 
@@ -84,9 +86,11 @@ if submitted:
         })
 
         # Save the profil 
-        # Penser a changer le chemin selon ou vous lancer
-        output_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "User_input", f"{new_id}_profile.csv")
-        # output_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "User_input", f"{new_id}_profile.csv")
+        
+        # Change with your path
+        # output_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "User_input", f"{new_id}_profile.csv")
+        output_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "User_input", f"{new_id}_profile.csv")
+        #output_path = os.path.join("C:\\Users\\augus\\ing4\\NLP\\projet\\Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI","Data", "User_input", f"{new_id}_profile.csv")
         
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         user_data.to_csv(output_path, index=False)
@@ -97,7 +101,7 @@ if submitted:
         
         st.success("🎯 Analysis complete!")
         
-        # sort in descending order 
+        # --- Sort in descending order --- 
         top_3_sorted = sorted(top_3, key=lambda x: x[1], reverse=True)
         
         # --- Display podium with links ---
@@ -105,9 +109,9 @@ if submitted:
 
         for i, (job, score) in enumerate(top_3_sorted, 1):
             emoji = "🥇" if i == 1 else "🥈" if i == 2 else "🥉"
-            st.markdown(f"### {emoji} **{job}** {score} **")
+            st.markdown(f"### {emoji} *{job}* {score} **")
 
-            # Générer automatiquement une recherche Welcome to the Jungle
+            # --- Automatically generate a search Welcome to the Jungle ---
             query = job.replace(" ", "%20")
             url = f"https://www.welcometothejungle.com/fr/jobs?query={query}"
 
@@ -123,9 +127,9 @@ if submitted:
 
         top3_df = pd.DataFrame(top_3_sorted, columns=["Job", "Similarity"])
 
-        # Penser a changer le chemin selon ou vous lancer 
-        output_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Response", f"{new_id}_top.csv")
-        # output_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Response", f"{new_id}_top.csv")
-
+        # Change with your path 
+        # output_path = os.path.join("OneDrive", "Bureau", "ING5", "NLP", "05 - Project", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Response", f"{new_id}_top.csv")
+        output_path = os.path.join("/","Users", "antonindoat", "Desktop", "Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI", "Data", "Response", f"{new_id}_top.csv")
+        # output_path = os.path.join("C:\\Users\\augus\\ing4\\NLP\\projet\\Project_NLP_MORIN_DOAT_MOUTON_LAMBERT_ROBERT_MAEDER_KFOURI","Data", "User_input", f"{new_id}_top.csv")
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         top3_df.to_csv(output_path, index=False)
