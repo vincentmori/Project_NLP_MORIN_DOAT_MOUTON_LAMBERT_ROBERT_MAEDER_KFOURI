@@ -38,7 +38,7 @@ Your responses will be saved into a CSV file for later analysis.
 # --- FORM ---
 with st.form("profile_form"):
     experiences = st.text_area("Describe your experiences and related skills:", height=150)
-    interests = st.text_area("Tell us about your interests in terms:", height=150)
+    interests = st.text_area("Tell us about your interests:", height=150)
     qualities = st.text_area("What are your main qualities:", height=150)
     
     col1, col2 = st.columns(2)
@@ -64,7 +64,7 @@ with st.form("profile_form"):
 # --- Print the top3 corresponding jobs ---
 if submitted:
     if experiences.strip() == "" or interests.strip() == "" or qualities.strip() == "":
-        st.warning("Please fill every subjecty. It is really important for a better response.")
+        st.warning("Please fill every subject. It is really important in order to have a better response.")
     else:
         st.success("✅ Your responses have been saved successfully!")
 
